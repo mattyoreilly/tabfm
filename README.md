@@ -29,7 +29,7 @@ You can install the development version of tabfm like so:
 
 ``` r
 # install.packages("remotes")
-remotes::install_local("tabfm")
+remotes::install_github("mattyoreilly/tabfm")
 ```
 
 Then, one time only, install the underlying Python package into a

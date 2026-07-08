@@ -7,6 +7,8 @@ Description: A thin wrapper around the 'TabFM' 'Python' package from Google
     classification and regression on tabular data via in-context learning,
     with no feature engineering or hyperparameter tuning.
 License: Apache License (>= 2)
+URL: https://github.com/mattyoreilly/tabfm
+BugReports: https://github.com/mattyoreilly/tabfm/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
