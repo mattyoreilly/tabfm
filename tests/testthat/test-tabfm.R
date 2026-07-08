@@ -94,6 +94,31 @@ test_that("fits survive saveRDS/readRDS and predict identically", {
   expect_identical(predict(restored, head(iris[-5])), before)
 })
 
+test_that("saved fits predict identically in a fresh R session", {
+  skip_if_no_tabfm()
+  pkg <- normalizePath(testthat::test_path("../.."))
+  skip_if_not(
+    file.exists(file.path(pkg, "DESCRIPTION")),
+    "package source not available (running from installed copy)"
+  )
+
+  fit <- tabfm(iris[-5], iris$Species)
+  before <- predict(fit, head(iris[-5]))
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path))
+  saveRDS(fit, path)
+
+  # a genuinely new R process: no loaded weights, no live Python objects
+  after <- callr::r(
+    function(pkg, path, newdata) {
+      pkgload::load_all(pkg, quiet = TRUE)
+      predict(readRDS(path), newdata)
+    },
+    args = list(pkg = pkg, path = path, newdata = head(iris[-5]))
+  )
+  expect_identical(after, before)
+})
+
 test_that("regression round trip works", {
   skip_if_no_tabfm()
 
