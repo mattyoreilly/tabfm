@@ -30,10 +30,10 @@
             text-anchor="middle">?</text>
     </g>
     <!-- wordmark -->
-    <text x="200" y="372" font-family="Helvetica, Arial, sans-serif"
+    <text x="200" y="334" font-family="Helvetica, Arial, sans-serif"
           font-size="72" font-weight="700" fill="#F8FAFC"
           text-anchor="middle" letter-spacing="1">tabfm</text>
-    <text x="200" y="408" font-family="Helvetica, Arial, sans-serif"
+    <text x="200" y="370" font-family="Helvetica, Arial, sans-serif"
           font-size="17" fill="#94A3B8" text-anchor="middle"
           letter-spacing="2">ZERO-SHOT TABULAR ML</text>
   </g>
