@@ -1,0 +1,12 @@
+url: ~
+template:
+  bootstrap: 5
+
+reference:
+- title: Modelling
+  contents:
+  - tabfm
+  - predict.tabfm
+- title: Setup
+  contents:
+  - install_tabfm

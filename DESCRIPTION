@@ -1,0 +1,23 @@
+Package: tabfm
+Title: R Interface to 'TabFM', a Zero-Shot Foundation Model for Tabular Data
+Version: 0.1.0
+Authors@R: person("Matt", "O'Reilly", email = "fermoymatt@gmail.com", role = c("aut", "cre"))
+Description: A thin wrapper around the 'TabFM' 'Python' package from Google
+    Research (<https://github.com/google-research/tabfm>). Provides zero-shot
+    classification and regression on tabular data via in-context learning,
+    with no feature engineering or hyperparameter tuning.
+License: Apache License (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    reticulate,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+SystemRequirements: Python (>= 3.9) with the 'tabfm' package (see
+    install_tabfm())
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

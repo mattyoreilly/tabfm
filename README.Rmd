@@ -1,0 +1,113 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+# tabfm
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+The goal of tabfm is to make [TabFM](https://github.com/google-research/tabfm),
+Google Research's zero-shot foundation model for tabular data, easy to use
+from R. You give it a data frame and a response; it gives you classification
+or regression predictions with **no feature engineering, no hyperparameter
+tuning, and no retraining** — the model predicts unseen tables in-context, in
+a single forward pass. See the
+[announcement blog post](https://research.google/blog/introducing-tabfm-a-zero-shot-foundation-model-for-tabular-data/)
+for details on how it works.
+
+tabfm wraps the official Python package with
+[reticulate](https://rstudio.github.io/reticulate/), and exposes the familiar
+R modelling interface: a fitting function plus `predict()`.
+
+## Installation
+
+You can install the development version of tabfm like so:
+
+```{r, eval = FALSE}
+# install.packages("remotes")
+remotes::install_local("tabfm")
+```
+
+Then, one time only, install the underlying Python package into a dedicated
+virtualenv:
+
+```{r, eval = FALSE}
+library(tabfm)
+install_tabfm()            # JAX backend, CPU
+# install_tabfm("pytorch") # PyTorch backend, CPU/GPU
+```
+
+## Example
+
+Fitting is instant — TabFM learns your table in-context rather than training
+on it — and the loaded model stays in memory, so repeated predictions are
+cheap. Character and factor columns are handled natively; you never need to
+dummy-code.
+
+```{r example}
+library(tabfm)
+
+fit <- tabfm(iris[-5], iris$Species)
+fit
+
+predict(fit, head(iris[-5]))
+
+predict(fit, head(iris[-5]), type = "prob")
+```
+
+Regression works the same way — pass a numeric response and
+`task = "regression"`:
+
+```{r regression}
+fit <- tabfm(mtcars[-1], mtcars$mpg, task = "regression")
+predict(fit, head(mtcars[-1]))
+```
+
+## Making it fast
+
+The pretrained weights are cached after the first download, but two optional
+lines in your `~/.Renviron` (no Hugging Face account needed) make cold starts
+noticeably faster:
+
+```
+HF_HUB_OFFLINE=1
+JAX_COMPILATION_CACHE_DIR=~/.cache/jax
+```
+
+* `HF_HUB_OFFLINE=1` loads weights straight from the local cache instead of
+  revalidating them against the Hugging Face Hub on each session's first
+  fit — unauthenticated requests get the slowest rate-limit tier, so this
+  skips the wait entirely. Unset it whenever you need to download weights
+  you don't have yet.
+* `JAX_COMPILATION_CACHE_DIR` lets new sessions reuse the compiled XLA
+  artifacts from previous ones instead of recompiling the model graph.
+
+Within a session, the loaded model is cached automatically: only the first
+`tabfm()` call per task pays the load cost.
+
+## Limitations
+
+* Predictions require a working Python installation; `install_tabfm()` sets
+  everything up via reticulate.
+* The first `tabfm()` call downloads the pretrained weights from the
+  Hugging Face Hub (cached afterwards in `~/.cache/huggingface/`). You may
+  see a warning about unauthenticated requests; it's harmless, but you can
+  silence it and get faster downloads by putting a free Hugging Face
+  [access token](https://huggingface.co/settings/tokens) in your
+  `~/.Renviron`: `HF_TOKEN=hf_...`
+* TabFM is zero-shot: there is nothing to tune, but also no way to trade
+  compute for accuracy on a specific dataset. If you need that, reach for
+  [tidymodels](https://www.tidymodels.org).
