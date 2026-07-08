@@ -30,12 +30,12 @@
             text-anchor="middle">?</text>
     </g>
     <!-- wordmark -->
-    <text x="200" y="334" font-family="Helvetica, Arial, sans-serif"
+    <text x="200" y="322" font-family="Helvetica, Arial, sans-serif"
           font-size="72" font-weight="700" fill="#F8FAFC"
           text-anchor="middle" letter-spacing="1">tabfm</text>
-    <text x="200" y="370" font-family="Helvetica, Arial, sans-serif"
-          font-size="17" fill="#94A3B8" text-anchor="middle"
-          letter-spacing="2">ZERO-SHOT TABULAR ML</text>
+    <text x="200" y="354" font-family="Helvetica, Arial, sans-serif"
+          font-size="16" fill="#94A3B8" text-anchor="middle"
+          letter-spacing="1.5">ZERO-SHOT TABULAR ML</text>
   </g>
   <!-- accent border, drawn inset over the clip -->
   <polygon points="200,11 390.5,121 390.5,341 200,451 9.5,341 9.5,121"

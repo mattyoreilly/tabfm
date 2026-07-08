@@ -5,6 +5,8 @@
 \alias{tabfm-package}
 \title{tabfm: R Interface to 'TabFM', a Zero-Shot Foundation Model for Tabular Data}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 A thin wrapper around the 'TabFM' 'Python' package from Google Research (\url{https://github.com/google-research/tabfm}). Provides zero-shot classification and regression on tabular data via in-context learning, with no feature engineering or hyperparameter tuning.
 }
 \seealso{
