@@ -28,6 +28,22 @@ test_that("predict() requires columns in training order", {
   )
 })
 
+test_that("tabfm objects survive serialization structurally", {
+  obj <- structure(
+    list(x = data.frame(a = 1:2), y = c("u", "v"), task = "classification",
+         backend = "jax", features = "a", cache = new.env(parent = emptyenv())),
+    class = "tabfm"
+  )
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path))
+  saveRDS(obj, path)
+  restored <- readRDS(path)
+  expect_identical(restored$x, obj$x)
+  expect_identical(restored$y, obj$y)
+  expect_true(is.environment(restored$cache))
+  expect_null(restored$cache$est)
+})
+
 test_that("print() describes the model", {
   expect_snapshot({
     print(fake_fit("classification", features = letters[1:4]))
@@ -59,6 +75,23 @@ test_that("classification round trip works", {
 
   # predicted label agrees with the highest-probability column
   expect_identical(preds, colnames(probs)[max.col(probs)])
+})
+
+test_that("fits survive saveRDS/readRDS and predict identically", {
+  skip_if_no_tabfm()
+
+  fit <- tabfm(iris[-5], iris$Species)
+  before <- predict(fit, head(iris[-5]))
+
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path))
+  saveRDS(fit, path)
+  restored <- readRDS(path)
+
+  # the Python estimator does not survive serialization ...
+  expect_true(reticulate::py_is_null_xptr(restored$cache$est))
+  # ... but predict() re-conditions on the stored data transparently
+  expect_identical(predict(restored, head(iris[-5])), before)
 })
 
 test_that("regression round trip works", {

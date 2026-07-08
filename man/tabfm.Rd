@@ -25,9 +25,10 @@ numeric vector for regression. Must have one value per row of \code{x}.}
 backend you installed with \code{\link[=install_tabfm]{install_tabfm()}}.}
 }
 \value{
-A model object of class \code{"tabfm"}: a list with elements \code{est} (the
-fitted Python estimator), \code{task}, and \code{features} (the training column
-names). Use \link[=predict.tabfm]{predict()} to generate predictions from it.
+A model object of class \code{"tabfm"}: a list carrying the training
+data (\code{x}, \code{y}), \code{task}, \code{backend}, \code{features} (the training column
+names), and a cache holding the fitted Python estimator. Use
+\link[=predict.tabfm]{predict()} to generate predictions from it.
 }
 \description{
 \code{tabfm()} loads the pretrained TabFM v1.0.0 weights and conditions them on
@@ -38,6 +39,12 @@ tuning, and no retraining.
 Loading the weights is the slow part, so it happens once per session for
 each \code{task}/\code{backend} combination and the model is reused by later fits;
 repeated calls to \link[=predict.tabfm]{predict()} are cheap.
+
+Fitted models survive \code{\link[=saveRDS]{saveRDS()}}/\code{\link[=readRDS]{readRDS()}}: because a zero-shot fit
+holds no learned state beyond the training data, a restored fit is
+re-conditioned on its stored data automatically the first time you call
+\link[=predict.tabfm]{predict()} in the new session (which also pays that
+session's one-time weights load).
 }
 \examples{
 \dontrun{

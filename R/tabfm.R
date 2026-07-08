@@ -97,6 +97,12 @@ install_tabfm <- function(backend = c("jax", "pytorch"), envname = "r-tabfm", ..
 #' each `task`/`backend` combination and the model is reused by later fits;
 #' repeated calls to [predict()][predict.tabfm] are cheap.
 #'
+#' Fitted models survive [saveRDS()]/[readRDS()]: because a zero-shot fit
+#' holds no learned state beyond the training data, a restored fit is
+#' re-conditioned on its stored data automatically the first time you call
+#' [predict()][predict.tabfm] in the new session (which also pays that
+#' session's one-time weights load).
+#'
 #' @param x A data frame of predictors. Character and factor columns are
 #'   handled natively by TabFM; no dummy coding is needed.
 #' @param y The response: a character vector or factor for classification, a
@@ -105,9 +111,10 @@ install_tabfm <- function(backend = c("jax", "pytorch"), envname = "r-tabfm", ..
 #'   `"regression"`.
 #' @param backend Compute backend: `"jax"` or `"pytorch"`. Must match the
 #'   backend you installed with [install_tabfm()].
-#' @returns A model object of class `"tabfm"`: a list with elements `est` (the
-#'   fitted Python estimator), `task`, and `features` (the training column
-#'   names). Use [predict()][predict.tabfm] to generate predictions from it.
+#' @returns A model object of class `"tabfm"`: a list carrying the training
+#'   data (`x`, `y`), `task`, `backend`, `features` (the training column
+#'   names), and a cache holding the fitted Python estimator. Use
+#'   [predict()][predict.tabfm] to generate predictions from it.
 #' @seealso [predict.tabfm()] to make predictions; [install_tabfm()] for
 #'   one-time setup.
 #' @family modelling
@@ -136,17 +143,39 @@ tabfm <- function(x, y, task = c("classification", "regression"),
   }
   if (is.factor(y)) y <- as.character(y)
 
-  model <- tabfm_model(task, backend)
-  est <- if (task == "classification") {
+  obj <- structure(
+    list(
+      x = x, y = y, task = task, backend = backend, features = names(x),
+      # est lives in an environment so a refit after readRDS() persists
+      cache = new.env(parent = emptyenv())
+    ),
+    class = "tabfm"
+  )
+  obj$cache$est <- new_est(obj)
+  obj
+}
+
+new_est <- function(object) {
+  model <- tabfm_model(object$task, object$backend)
+  est <- if (object$task == "classification") {
     tabfm_py$TabFMClassifier(model = model)
   } else {
     tabfm_py$TabFMRegressor(model = model)
   }
-  est$fit(x, y)
-  structure(
-    list(est = est, task = task, features = names(x)),
-    class = "tabfm"
-  )
+  est$fit(object$x, object$y)
+  est
+}
+
+# A TabFM fit holds no learned state beyond the training data, so a fit
+# restored with readRDS() (whose Python object is a dead pointer) can be
+# rebuilt transparently by re-conditioning on the stored data.
+tabfm_est <- function(object) {
+  est <- object$cache$est
+  if (is.null(est) || reticulate::py_is_null_xptr(est)) {
+    est <- new_est(object)
+    object$cache$est <- est
+  }
+  est
 }
 
 #' Predict from a TabFM model
@@ -194,13 +223,14 @@ predict.tabfm <- function(object, newdata, type = c("response", "prob"), ...) {
          "in the same order: ", paste(object$features, collapse = ", "), ".")
   }
 
+  est <- tabfm_est(object)
   if (type == "prob") {
-    p <- object$est$predict_proba(newdata)
-    colnames(p) <- as.character(object$est$classes_)
+    p <- est$predict_proba(newdata)
+    colnames(p) <- as.character(est$classes_)
     p
   } else {
     # numpy 1-d arrays come back as R arrays with a dim attribute; drop it
-    as.vector(object$est$predict(newdata))
+    as.vector(est$predict(newdata))
   }
 }
 

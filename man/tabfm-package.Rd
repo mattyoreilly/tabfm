@@ -5,7 +5,15 @@
 \alias{tabfm-package}
 \title{tabfm: R Interface to 'TabFM', a Zero-Shot Foundation Model for Tabular Data}
 \description{
-A thin wrapper around the 'TabFM' Python package from Google Research (\url{https://github.com/google-research/tabfm}). Provides zero-shot classification and regression on tabular data via in-context learning, with no feature engineering or hyperparameter tuning.
+A thin wrapper around the 'TabFM' 'Python' package from Google Research (\url{https://github.com/google-research/tabfm}). Provides zero-shot classification and regression on tabular data via in-context learning, with no feature engineering or hyperparameter tuning.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mattyoreilly/tabfm}
+  \item Report bugs at \url{https://github.com/mattyoreilly/tabfm/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Matt O'Reilly \email{fermoymatt@gmail.com}
