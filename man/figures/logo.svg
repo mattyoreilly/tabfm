@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 462" width="400" height="462">
+  <!-- pointy-top hexagon, standard R hex sticker geometry -->
+  <defs>
+    <clipPath id="hexclip">
+      <polygon points="200,11 390.5,121 390.5,341 200,451 9.5,341 9.5,121"/>
+    </clipPath>
+  </defs>
+  <polygon points="200,11 390.5,121 390.5,341 200,451 9.5,341 9.5,121"
+           fill="#1E293B"/>
+  <g clip-path="url(#hexclip)">
+    <!-- table motif: three feature columns, one predicted column -->
+    <g>
+      <!-- header row -->
+      <rect x="86"  y="98" width="62" height="34" rx="6" fill="#475569"/>
+      <rect x="156" y="98" width="62" height="34" rx="6" fill="#475569"/>
+      <rect x="226" y="98" width="62" height="34" rx="6" fill="#2C7A73"/>
+      <!-- data rows -->
+      <rect x="86"  y="140" width="62" height="34" rx="6" fill="#334155"/>
+      <rect x="156" y="140" width="62" height="34" rx="6" fill="#334155"/>
+      <rect x="226" y="140" width="62" height="34" rx="6" fill="#2C7A73"/>
+      <rect x="86"  y="182" width="62" height="34" rx="6" fill="#334155"/>
+      <rect x="156" y="182" width="62" height="34" rx="6" fill="#334155"/>
+      <rect x="226" y="182" width="62" height="34" rx="6" fill="#2C7A73"/>
+      <rect x="86"  y="224" width="62" height="34" rx="6" fill="#334155"/>
+      <rect x="156" y="224" width="62" height="34" rx="6" fill="#334155"/>
+      <!-- the zero-shot prediction cell -->
+      <rect x="226" y="224" width="62" height="34" rx="6" fill="#4FD1C5"/>
+      <text x="257" y="248" font-family="Helvetica, Arial, sans-serif"
+            font-size="24" font-weight="700" fill="#1E293B"
+            text-anchor="middle">?</text>
+    </g>
+    <!-- wordmark -->
+    <text x="200" y="372" font-family="Helvetica, Arial, sans-serif"
+          font-size="72" font-weight="700" fill="#F8FAFC"
+          text-anchor="middle" letter-spacing="1">tabfm</text>
+    <text x="200" y="408" font-family="Helvetica, Arial, sans-serif"
+          font-size="17" fill="#94A3B8" text-anchor="middle"
+          letter-spacing="2">ZERO-SHOT TABULAR ML</text>
+  </g>
+  <!-- accent border, drawn inset over the clip -->
+  <polygon points="200,11 390.5,121 390.5,341 200,451 9.5,341 9.5,121"
+           fill="none" stroke="#4FD1C5" stroke-width="10"/>
+</svg>
