@@ -75,6 +75,13 @@ install_tabfm <- function(backend = c("jax", "pytorch"), envname = "r-tabfm", ..
     }
   }
   if (!reticulate::virtualenv_exists(envname)) {
+    # GUI R sessions often don't see Homebrew/pyenv Pythons on their PATH;
+    # fall back to a reticulate-managed Python rather than erroring
+    if (is.null(reticulate::virtualenv_starter(">=3.11"))) {
+      message("No Python >= 3.11 found; installing one via reticulate ",
+              "(one-time, may take a few minutes).")
+      reticulate::install_python()
+    }
     reticulate::virtualenv_create(envname, version = ">=3.11")
   }
 
